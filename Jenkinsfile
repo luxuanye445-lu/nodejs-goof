@@ -2,8 +2,6 @@ pipeline {
   agent any
   options { timestamps() }
 
-  tools { nodejs 'NODE18' }
-
   triggers { pollSCM('* * * * *') } 
 
   stages {
