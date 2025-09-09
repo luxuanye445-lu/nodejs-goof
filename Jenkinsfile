@@ -5,23 +5,41 @@ pipeline {
 
   stages {
     stage('Checkout') {
-      steps { checkout scm }
+      steps {
+        checkout scm
+      }
     }
 
     stage('Verify Node & npm') {
-      steps { sh 'node -v && npm -v' }
+      steps {
+        sh '/opt/homebrew/bin/node -v && /opt/homebrew/bin/npm -v'
+      }
     }
 
     stage('Install dependencies') {
-      steps { sh 'npm install' }
+      steps {
+        sh '/opt/homebrew/bin/npm install'
+      }
+    }
+
+    stage('Run tests (optional)') {
+      steps {
+        sh '/opt/homebrew/bin/npm test || true'
+      }
+    }
+
+    stage('Coverage (optional)') {
+      steps {
+        sh '/opt/homebrew/bin/npm run coverage || true'
+      }
     }
 
     stage('NPM Audit (Security Scan)') {
       steps {
         sh '''
           set -o pipefail
-          (npm audit || true) | tee npm-audit.txt
-          npm audit --json > npm-audit.json || true
+          (/opt/homebrew/bin/npm audit || true) | tee npm-audit.txt
+          /opt/homebrew/bin/npm audit --json > npm-audit.json || true
         '''
       }
     }
@@ -29,8 +47,8 @@ pipeline {
 
   post {
     always {
-      archiveArtifacts artifacts: 'npm-audit.txt,npm-audit.json', allowEmptyArchive: true
+      archiveArtifacts artifacts: 'npm-audit.txt,npm-audit.json,coverage/**,**/lcov.info',
+                       allowEmptyArchive: true
     }
   }
 }
-
