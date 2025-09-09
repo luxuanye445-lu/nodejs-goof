@@ -18,7 +18,7 @@ pipeline {
     }
 
     stage('Auto Trigger Proof') {
-      steps { sh 'echo "✅ Auto triggered at $(date)"' }
+      steps { sh 'echo "Auto triggered at $(date)"' }
     }
 
     stage('Verify Node & npm') {
