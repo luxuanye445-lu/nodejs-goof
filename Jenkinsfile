@@ -2,23 +2,29 @@ pipeline {
   agent any
   options { timestamps() }
 
-  triggers { pollSCM('* * * * *') } 
+  triggers { pollSCM('* * * * *') }
 
   stages {
     stage('Checkout') {
       steps { checkout scm }
     }
+
     stage('Verify Node & npm') {
       steps { sh 'node --version && npm --version' }
     }
+
     stage('Install dependencies') {
-      steps { sh 'npm install' } 
+      steps { sh 'npm install' }
+    }
+
     stage('Run tests (optional)') {
-      steps { sh 'npm test || true' } 
+      steps { sh 'npm test || true' }
     }
+
     stage('Coverage (optional)') {
-      steps { sh 'npm run coverage || true' } 
+      steps { sh 'npm run coverage || true' }
     }
+
     stage('NPM Audit (Security Scan)') {
       steps {
         sh '''
@@ -29,9 +35,11 @@ pipeline {
       }
     }
   }
+
   post {
     always {
-      archiveArtifacts artifacts: 'npm-audit.txt,npm-audit.json,coverage/**,**/lcov.info', allowEmptyArchive: true
+      archiveArtifacts artifacts: 'npm-audit.txt,npm-audit.json,coverage/**,**/lcov.info',
+                       allowEmptyArchive: true
     }
   }
 }
