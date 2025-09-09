@@ -6,10 +6,8 @@ pipeline {
     disableConcurrentBuilds()
   }
 
-  // 每分钟检查一次 Git 变化
   triggers { pollSCM('* * * * *') }
 
-  // Mac 本机 Homebrew Node 路径
   environment {
     PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
   }
@@ -19,7 +17,6 @@ pipeline {
       steps { checkout scm }
     }
 
-    // 证明是自动触发
     stage('Auto Trigger Proof') {
       steps { sh 'echo "✅ Auto triggered at $(date)"' }
     }
@@ -42,7 +39,6 @@ pipeline {
       }
     }
 
-    // 从 npm-audit.json 生成简短摘要，便于邮件正文展示
     stage('Build Audit Summary') {
       steps {
         sh '''
@@ -55,7 +51,6 @@ pipeline {
 
   post {
     always {
-      // 归档到本次构建产物，方便网页查看/下载
       archiveArtifacts artifacts: 'npm-audit.txt,npm-audit.json,audit-summary.txt', allowEmptyArchive: true
     }
 
@@ -63,9 +58,9 @@ pipeline {
       script {
         def summary = fileExists('audit-summary.txt') ? readFile('audit-summary.txt').trim() : 'summary unavailable'
         emailext(
-          to: 'luxuanye445@gmail.com',                // ← 改成你的收件邮箱（可逗号分隔多个）
+          to: 'luxuanye445@gmail.com',                
           subject: "[SUCCESS] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-          body: """<p>✅ Build succeeded.</p>
+          body: """<p>Build succeeded.</p>
                    <p><b>Audit summary:</b> ${summary}</p>
                    <p>Artifacts: npm-audit.txt / npm-audit.json / audit-summary.txt</p>
                    <p>Job: <a href="${env.BUILD_URL}">${env.JOB_NAME} #${env.BUILD_NUMBER}</a></p>
@@ -80,9 +75,9 @@ pipeline {
       script {
         def summary = fileExists('audit-summary.txt') ? readFile('audit-summary.txt').trim() : 'summary unavailable'
         emailext(
-          to: 'luxuanye445@gmail.com',                // ← 改成你的收件邮箱
+          to: 'luxuanye445@gmail.com',                
           subject: "[FAILURE] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-          body: """<p>❌ Build failed.</p>
+          body: """<p>Build failed.</p>
                    <p><b>Audit summary (may be partial):</b> ${summary}</p>
                    <p>Check console: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>""",
           mimeType: 'text/html',
