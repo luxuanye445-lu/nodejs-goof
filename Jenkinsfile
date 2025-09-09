@@ -53,7 +53,7 @@ pipeline {
     success {
       emailext(
         subject: "[SUCCESS] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-        to: 'luxuanye445@example.com',   
+        to: 'luxuanye445@gmail.com',   
         body: """<p>Build succeeded: <a href="${env.BUILD_URL}">${env.JOB_NAME} #${env.BUILD_NUMBER}</a></p>
                  <p>Console: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
                  <p>Attached: npm-audit.txt / npm-audit.json</p>""",
@@ -65,7 +65,7 @@ pipeline {
     failure {
       emailext(
         subject: "[FAILURE] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-        to: 'luxuanye445@example.com',   
+        to: 'luxuanye445@gmail.com',   
         body: """<p>Build failed: <a href="${env.BUILD_URL}">${env.JOB_NAME} #${env.BUILD_NUMBER}</a></p>
                  <p>Check console: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>""",
         mimeType: 'text/html'
